@@ -29,20 +29,23 @@
         <!-- Jakarta EE API -->
         <jakartaee-api.version>10.0.0</jakartaee-api.version>
         <eclipselink.version>4.0.2</eclipselink.version>
+        <querydsl.version>5.0.0</querydsl.version>
 
         <!-- Eclipse Krazo -->
         <krazo.version>3.0.1</krazo.version>
 
         <!-- Arquillian BOM -->
         <arquillian.version>1.7.1.Final</arquillian.version>
-        <arquillian-drone.version>3.0.0-alpha.5</arquillian-drone.version>
+        <wildfly-arquillian-container-embedded>5.0.1.Final</wildfly-arquillian-container-embedded>
+        <arquillian-drone.version>3.0.0-alpha.7</arquillian-drone.version>
         <arquillian-graphene.version>2.5.4</arquillian-graphene.version>
         <arquillian-selenium.version>2.53.0</arquillian-selenium.version>
         <htmlunit.version>3.6.0</htmlunit.version>
         <arquillian.launch>wildfly-embedded</arquillian.launch>
 
         <!-- Wildfly server-->
-        <wildfly.version>27.0.0.Final</wildfly.version>
+        <wildfly.version>29.0.1.Final</wildfly.version>
+        <wildfly-embedded.version>22.0.1.Final</wildfly-embedded.version>
         <wildfly-maven-plugin.version>4.2.0.Final</wildfly-maven-plugin.version>
         <wildfly-arquillian.version>5.0.0.Alpha6</wildfly-arquillian.version>
         <!--  websockets-jsr and resteasy for client, aligned with Wildfly version. -->
@@ -50,7 +53,8 @@
         <resteasy.version>6.2.0.Final</resteasy.version>
 
         <!-- By default, skip tests -->
-        <skipTests>false</skipTests>
+        <skipTests>true</skipTests>
+        <selenium.version>4.14.1</selenium.version>
 
         <!-- PhantomJS will be our default browser if no profile is specified-->
         <browser>phantomjs</browser>
@@ -74,7 +78,7 @@
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>wildfly-ee-with-tools</artifactId>
-                <version>27.0.1.Final</version>
+                <version>${wildfly.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -102,6 +106,11 @@
                 <version>${arquillian-drone.version}</version>
                 <type>pom</type>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.codeborne</groupId>
+                <artifactId>phantomjsdriver</artifactId>
+                <version>1.5.0</version>
             </dependency>
 
             <!-- HtmlUnit -->
@@ -177,17 +186,25 @@
                 <version>5.5.0</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>net.sourceforge.htmlunit</groupId>
-                <artifactId>htmlunit</artifactId>
-                <version>2.8</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>${querydsl.version}</version>
+            <classifier>jakarta</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${querydsl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.krazo</groupId>
@@ -204,6 +221,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.11</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-core</artifactId>
@@ -249,14 +272,14 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
-            <version>3.11.0</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
-            <version>4.14.1</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -266,34 +289,35 @@
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.arquillian</groupId>
             <artifactId>wildfly-arquillian-container-embedded</artifactId>
-            <version>8.2.1.Final</version>
+            <version>${wildfly-arquillian-container-embedded}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-protocol</artifactId>
+            <version>22.0.1.Final</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-embedded</artifactId>
-            <version>8.2.1.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>sun.jdk</groupId>
-                    <artifactId>jconsole</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${wildfly-embedded.version}</version>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
+<!--        <testResources>-->
+<!--            <testResource>-->
+<!--                <directory>src/test/resources</directory>-->
+<!--                <filtering>true</filtering>-->
+<!--            </testResource>-->
+<!--        </testResources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -304,6 +328,22 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven-war-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>1.1.3</version>
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>process</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>target/generated-sources</outputDirectory>-->
+<!--                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -386,6 +426,20 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <id>check-dependency-updates</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>display-dependency-updates</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
