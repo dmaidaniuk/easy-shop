@@ -275,7 +275,7 @@
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-embedded</artifactId>
-            <version>8.2.1.Final</version>
+            <version>9.0.2.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>sun.jdk</groupId>
