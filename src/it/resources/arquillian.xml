@@ -1,0 +1,35 @@
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian
+    https://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <defaultProtocol type="Servlet 5.0"/>
+
+    <engine>
+        <property name="deploymentExportPath">target/</property>
+    </engine>
+
+    <container qualifier="wildfly-managed" default="true">
+        <configuration>
+            <property name="jbossHome">${jbossHome:target/wildfly-8.1.0.Final}</property>
+        </configuration>
+    </container>
+
+<!--    <container qualifier="wildfly-embedded">-->
+<!--        <configuration>-->
+<!--            <property name="javaVmArguments">-->
+<!--                -client -noverify -XX:+UseFastAccessorMethods -Xms64m -Xmx1024m -XX:MaxPermSize=512m-->
+<!--            </property>-->
+<!--            &lt;!&ndash;<property name="jbossHome">${jbossHome:target/wildfly-18.0.1.Final}</property>&ndash;&gt;-->
+<!--            <property name="serverConfig">standalone-full.xml</property>-->
+<!--        </configuration>-->
+<!--    </container>-->
+
+    <extension qualifier="drone">
+        <property name="instantiationTimeoutInSeconds">180</property>
+    </extension>
+
+    <extension qualifier="webdriver">
+        <property name="browser">${browser}</property>
+    </extension>
+</arquillian>

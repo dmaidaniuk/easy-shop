@@ -1,0 +1,5 @@
+/target/
+/.idea
+/installs
+/.vscode
+/*.iml
