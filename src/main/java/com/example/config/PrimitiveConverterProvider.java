@@ -40,6 +40,7 @@ public class PrimitiveConverterProvider implements ParamConverterProvider {
                     try {
                         return (T) (Integer) Integer.parseInt(value);
                     } catch (NumberFormatException e) {
+                        System.out.println("Exception during cast to string" + e.getMessage());
                     }
 
                     return (T) (Integer) 0;

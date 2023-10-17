@@ -15,15 +15,15 @@
         </configuration>
     </container>
 
-<!--    <container qualifier="wildfly-embedded">-->
-<!--        <configuration>-->
+    <container qualifier="wildfly-embedded">
+        <configuration>
 <!--            <property name="javaVmArguments">-->
 <!--                -client -noverify -XX:+UseFastAccessorMethods -Xms64m -Xmx1024m -XX:MaxPermSize=512m-->
 <!--            </property>-->
-<!--            &lt;!&ndash;<property name="jbossHome">${jbossHome:target/wildfly-18.0.1.Final}</property>&ndash;&gt;-->
-<!--            <property name="serverConfig">standalone-full.xml</property>-->
-<!--        </configuration>-->
-<!--    </container>-->
+            <property name="jbossHome">${jbossHome:target/wildfly-preview-27.0.0.Final}</property>
+            <property name="serverConfig">standalone-full.xml</property>
+        </configuration>
+    </container>
 
     <extension qualifier="drone">
         <property name="instantiationTimeoutInSeconds">180</property>
