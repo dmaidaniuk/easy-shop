@@ -427,6 +427,21 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <!-- Frontend module -->
+                    <execution>
+                        <id>add-frontend-resources</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/front/webapp</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
