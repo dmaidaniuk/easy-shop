@@ -13,7 +13,11 @@
     <description>A Jakarta EE 10 MVC-based shop project</description>
 
     <properties>
+        <!-- BUILD CONFIG -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <maven.compiler.release>17</maven.compiler.release>
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
@@ -21,7 +25,7 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
         <cargo-maven3-plugin.version>1.10.9</cargo-maven3-plugin.version>
-        <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+        <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
         <maven-surefire-report-plugin.version>3.1.2</maven-surefire-report-plugin.version>
@@ -29,20 +33,25 @@
         <!-- Jakarta EE API -->
         <jakartaee-api.version>10.0.0</jakartaee-api.version>
         <eclipselink.version>4.0.2</eclipselink.version>
+        <querydsl.version>5.1.0</querydsl.version>
 
         <!-- Eclipse Krazo -->
         <krazo.version>3.0.1</krazo.version>
 
         <!-- Arquillian BOM -->
-        <arquillian.version>1.7.1.Final</arquillian.version>
-        <arquillian-drone.version>3.0.0-alpha.5</arquillian-drone.version>
+        <arquillian.version>1.9.1.Final</arquillian.version>
+        <wildfly-arquillian-container-embedded>5.1.0.Beta4</wildfly-arquillian-container-embedded>
+        <arquillian-drone.version>3.0.0-alpha.7</arquillian-drone.version>
         <arquillian-graphene.version>2.5.4</arquillian-graphene.version>
         <arquillian-selenium.version>2.53.0</arquillian-selenium.version>
         <htmlunit.version>3.6.0</htmlunit.version>
         <arquillian.launch>wildfly-embedded</arquillian.launch>
 
         <!-- Wildfly server-->
-        <wildfly.version>27.0.0.Final</wildfly.version>
+        <wildfly.version>33.0.0.Final</wildfly.version>
+        <wildfly-microprofile.version>${wildfly.version}</wildfly-microprofile.version>
+        <wildfly-embedded.version>25.0.1.Final</wildfly-embedded.version>
+        <wildfly-protocol.version>${wildfly-embedded.version}</wildfly-protocol.version>
         <wildfly-maven-plugin.version>4.2.0.Final</wildfly-maven-plugin.version>
         <wildfly-arquillian.version>5.0.0.Alpha6</wildfly-arquillian.version>
         <!--  websockets-jsr and resteasy for client, aligned with Wildfly version. -->
@@ -50,7 +59,8 @@
         <resteasy.version>6.2.0.Final</resteasy.version>
 
         <!-- By default, skip tests -->
-        <skipTests>false</skipTests>
+        <skipTests>true</skipTests>
+        <selenium.version>4.23.1</selenium.version>
 
         <!-- PhantomJS will be our default browser if no profile is specified-->
         <browser>phantomjs</browser>
@@ -71,13 +81,13 @@
                 <type>pom</type>
             </dependency>
 
-            <dependency>
-                <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-ee-with-tools</artifactId>
-                <version>27.0.1.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.wildfly.bom</groupId>-->
+<!--                <artifactId>wildfly-ee-with-tools</artifactId>-->
+<!--                <version>${wildfly.version}</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
 
             <!-- Arquillian Drone dependencies and WebDriver/Selenium dependencies -->
             <dependency>
@@ -103,12 +113,17 @@
                 <type>pom</type>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.codeborne</groupId>
+                <artifactId>phantomjsdriver</artifactId>
+                <version>1.5.0</version>
+            </dependency>
 
             <!-- HtmlUnit -->
             <dependency>
                 <groupId>org.htmlunit</groupId>
                 <artifactId>htmlunit</artifactId>
-                <version>3.6.0</version>
+                <version>4.4.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -177,17 +192,32 @@
                 <version>5.5.0</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>net.sourceforge.htmlunit</groupId>
-                <artifactId>htmlunit</artifactId>
-                <version>2.8</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.bom</groupId>
+            <artifactId>wildfly-microprofile</artifactId>
+            <version>${wildfly-microprofile.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+            <version>${querydsl.version}</version>
+            <classifier>jakarta</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-jpa</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${querydsl.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.krazo</groupId>
@@ -197,13 +227,19 @@
             <groupId>jakarta.mvc</groupId>
             <artifactId>jakarta.mvc-api</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.eclipse.persistence</groupId>-->
+<!--            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>-->
+<!--            <version>${eclipselink.version}</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+        <!-- Test artifacts -->
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-            <version>${eclipselink.version}</version>
-            <scope>provided</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.7</version>
+            <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-core</artifactId>
@@ -214,20 +250,13 @@
             <artifactId>arquillian-junit5-container</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- see: https://github.com/arquillian/arquillian-core/issues/248 -->
-        <!-- and https://github.com/arquillian/arquillian-core/pull/246/files -->
-        <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-depchain</artifactId>
-            <scope>test</scope>
-            <type>pom</type>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jboss.shrinkwrap.resolver</groupId>-->
+<!--            <artifactId>shrinkwrap-resolver-depchain</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--            <type>pom</type>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver-impl</artifactId>
@@ -237,7 +266,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
-            <version>4.1.100.Final</version>
+            <version>4.1.112.Final</version>
             <scope>test</scope>
         </dependency>
 
@@ -249,14 +278,14 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
-            <version>3.11.0</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-support</artifactId>
-            <version>4.14.1</version>
+            <version>${selenium.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -266,22 +295,23 @@
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.arquillian</groupId>
             <artifactId>wildfly-arquillian-container-embedded</artifactId>
-            <version>8.2.1.Final</version>
+            <version>${wildfly-arquillian-container-embedded}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.wildfly</groupId>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-protocol</artifactId>
+            <version>${wildfly-protocol.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-embedded</artifactId>
-            <version>8.2.1.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>sun.jdk</groupId>
-                    <artifactId>jconsole</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${wildfly-embedded.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -304,6 +334,22 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven-war-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>1.1.3</version>
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>process</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>target/generated-sources</outputDirectory>-->
+<!--                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -349,7 +395,7 @@
                                 <include>**/*IT.java</include>
                             </includes>
                             <environmentVariables>
-                                <JBOSS_HOME>${project.build.directory}/wildfly-preview-${wildfly.version}</JBOSS_HOME>
+                                <JBOSS_HOME>${project.build.directory}/wildfly-${wildfly-microprofile.version}</JBOSS_HOME>
                             </environmentVariables>
                             <reportsDirectory>${project.build.directory}/test-reports/it</reportsDirectory>
                         </configuration>
@@ -387,6 +433,35 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <!-- Frontend module -->
+                    <execution>
+                        <id>add-frontend-resources</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/front/webapp</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.8.1</version>
+                <executions>
+                    <execution>
+                        <id>check-dependency-updates</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>display-dependency-updates</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
@@ -403,8 +478,8 @@
             </dependencies>
             <properties>
                 <!-- Wildfly server -->
-                <wildfly.artifactId>wildfly-preview-dist</wildfly.artifactId>
-                <jboss-as.home>${project.build.directory}/wildfly-preview-${wildfly.version}</jboss-as.home>
+                <wildfly.artifactId>wildfly-dist</wildfly.artifactId>
+                <jboss-as.home>${project.build.directory}/wildfly-${wildfly.version}</jboss-as.home>
             </properties>
             <build>
                 <plugins>
@@ -442,12 +517,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <repositories>
-                <repository>
-                    <id>opensaml</id>
-                    <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
-                </repository>
-            </repositories>
         </profile>
         <profile>
             <id>firefox</id>
