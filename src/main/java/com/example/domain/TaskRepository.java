@@ -33,7 +33,7 @@ public class TaskRepository {
 
         CriteriaQuery<Task> q = cb.createQuery(Task.class);
         Root<Task> c = q.from(Task.class);
-        q.where(cb.equal(c.get(Task_.status), status));
+//        q.where(cb.equal(c.get(Task_.status), status));
 
         TypedQuery<Task> query = em.createQuery(q);
 
