@@ -41,7 +41,7 @@
         <!-- Arquillian BOM -->
         <arquillian.version>1.9.1.Final</arquillian.version>
         <wildfly-arquillian-container-embedded>5.1.0.Beta4</wildfly-arquillian-container-embedded>
-        <arquillian-drone.version>3.0.0-alpha.7</arquillian-drone.version>
+        <arquillian-drone.version>3.0.0-alpha.8</arquillian-drone.version>
         <arquillian-graphene.version>2.5.4</arquillian-graphene.version>
         <arquillian-selenium.version>2.53.0</arquillian-selenium.version>
         <htmlunit.version>3.6.0</htmlunit.version>
