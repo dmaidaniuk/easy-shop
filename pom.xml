@@ -60,7 +60,7 @@
 
         <!-- By default, skip tests -->
         <skipTests>true</skipTests>
-        <selenium.version>4.23.1</selenium.version>
+        <selenium.version>4.24.0</selenium.version>
 
         <!-- PhantomJS will be our default browser if no profile is specified-->
         <browser>phantomjs</browser>
