@@ -52,7 +52,7 @@
         <wildfly-microprofile.version>${wildfly.version}</wildfly-microprofile.version>
         <wildfly-embedded.version>25.0.1.Final</wildfly-embedded.version>
         <wildfly-protocol.version>${wildfly-embedded.version}</wildfly-protocol.version>
-        <wildfly-maven-plugin.version>4.2.0.Final</wildfly-maven-plugin.version>
+        <wildfly-maven-plugin.version>5.0.1.Final</wildfly-maven-plugin.version>
         <wildfly-arquillian.version>5.0.0.Alpha6</wildfly-arquillian.version>
         <!--  websockets-jsr and resteasy for client, aligned with Wildfly version. -->
         <undertow-websockets-jsr.version>2.0.26.Final</undertow-websockets-jsr.version>
