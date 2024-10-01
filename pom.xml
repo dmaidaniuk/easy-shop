@@ -48,7 +48,7 @@
         <arquillian.launch>wildfly-embedded</arquillian.launch>
 
         <!-- Wildfly server-->
-        <wildfly.version>33.0.0.Final</wildfly.version>
+        <wildfly.version>33.0.2.Final</wildfly.version>
         <wildfly-microprofile.version>${wildfly.version}</wildfly-microprofile.version>
         <wildfly-embedded.version>25.0.1.Final</wildfly-embedded.version>
         <wildfly-protocol.version>${wildfly-embedded.version}</wildfly-protocol.version>
